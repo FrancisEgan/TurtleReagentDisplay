@@ -17,12 +17,6 @@ A lightweight Turtle WoW (1.12) addon that displays reagent counts directly on y
 
 In the Turtle WoW launcher addons tab, click "Add new addon" and paste in the link to this repository.
 
-## Slash Commands
-
-- `/rd` — Show help and available commands
-- `/rd list` — Print all reagent counts currently in your bags
-- `/rd debug` — Inspect all visible action bar buttons (spell names, textures, matched reagents)
-
 ## How It Works
 
 ReagentDisplay scans your visible action bar buttons using two detection methods:

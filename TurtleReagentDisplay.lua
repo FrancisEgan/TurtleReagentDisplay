@@ -244,7 +244,7 @@ end
 -- Button configs – prefix, count, slot-getter
 ---------------------------------------------------------------------------
 local BUTTON_CONFIGS = {
-    { prefix = "ActionButton",              count = 12, getSlot = function(b) return ActionButton_GetPagedID(b)  end },
+    { prefix = "ActionButton",              count = 12, getSlot = function(b) return ActionButton_GetPagedID(b) end },
     { prefix = "BonusActionButton",         count = 12, getSlot = function(b) return b:GetID()                  end },
     { prefix = "MultiBarBottomLeftButton",  count = 12, getSlot = function(b) return b:GetID() + 60             end },
     { prefix = "MultiBarBottomRightButton", count = 12, getSlot = function(b) return b:GetID() + 48             end },
@@ -325,56 +325,3 @@ frame:SetScript("OnEvent", function()
     end
     RequestUpdate()
 end)
-
----------------------------------------------------------------------------
--- Slash commands
----------------------------------------------------------------------------
-SLASH_REAGENTDISPLAY1 = "/reagentdisplay"
-SLASH_REAGENTDISPLAY2 = "/rd"
-SlashCmdList["REAGENTDISPLAY"] = function(msg)
-    if msg == "debug" then
-        DEFAULT_CHAT_FRAME:AddMessage("|cff00ccffReagentDisplay debug:|r scanning action slots...")
-        for _, cfg in ipairs(BUTTON_CONFIGS) do
-            for i = 1, cfg.count do
-                local button = getglobal(cfg.prefix .. i)
-                if button and button:IsVisible() then
-                    local slot = cfg.getSlot(button)
-                    if slot and HasAction(slot) then
-                        local tex = GetActionTexture(slot) or "none"
-                        local macro = GetActionText(slot)
-                        local group, spellName = GetGroupForSlot(slot)
-                        local dbg = "  " .. cfg.prefix .. i
-                            .. " slot=" .. slot
-                            .. " spell=" .. (spellName or "nil")
-                            .. " tex=" .. tex
-                            .. (macro and (" macro=" .. macro) or "")
-                            .. (group and (" -> " .. group .. "=" .. (groupCounts[group] or "?")) or "")
-                        DEFAULT_CHAT_FRAME:AddMessage(dbg)
-                    end
-                end
-            end
-        end
-        return
-    end
-    if msg == "list" then
-        DEFAULT_CHAT_FRAME:AddMessage("|cff00ccffReagentDisplay|r reagent counts:")
-        UpdateAllReagentCounts()
-        for key, count in pairs(groupCounts) do
-            if count > 0 then
-                local items = ""
-                for _, n in ipairs(REAGENT_GROUPS[key]) do
-                    local c = CountItem(n)
-                    if c > 0 then items = items .. "  " .. n .. "=" .. c end
-                end
-                DEFAULT_CHAT_FRAME:AddMessage("  " .. key .. ": " .. count .. items)
-            end
-        end
-        return
-    end
-    DEFAULT_CHAT_FRAME:AddMessage("|cff00ccffReagentDisplay|r commands:")
-    DEFAULT_CHAT_FRAME:AddMessage("  /rd        - show this help")
-    DEFAULT_CHAT_FRAME:AddMessage("  /rd list   - show all reagent counts in bags")
-    DEFAULT_CHAT_FRAME:AddMessage("  /rd debug  - inspect action bar buttons")
-end
-
-DEFAULT_CHAT_FRAME:AddMessage("|cff00ccffReagentDisplay|r loaded. Type /rd for commands.")

@@ -3,4 +3,4 @@
 ## Notes: Shows reagent counts on action bar spell buttons
 ## Author: Uncle Francis
 ## Version: 1.0.0
-ReagentDisplay.lua
+TurtleReagentDisplay.lua
