@@ -1,0 +1,68 @@
+# ReagentDisplay
+
+A lightweight Turtle WoW (1.12) addon that displays reagent counts directly on your action bar buttons. Never get caught without reagents again — see at a glance how many you have left before your next raid, dungeon, or portal request.
+
+## Features
+
+- **Reagent count overlay** on every action bar button that uses a consumable reagent
+- **Works on all action bars** — main bar, bonus bar, and all four multi-bars
+- **Supports all classes** with consumable item reagents
+- **Red warning** when count reaches zero
+- **Auto-updates** on bag changes, action bar swaps, and page changes
+- **Turtle WoW compatible** — auto-detects custom `Teleport:` and `Portal:` destinations via prefix matching
+- **Minimal performance impact** — throttled scanning with event-driven updates
+
+## Supported Spells & Reagents
+
+| Class | Spells | Reagent |
+|-------|--------|---------|
+| **Mage** | Teleport: Stormwind / Ironforge / Darnassus / Orgrimmar / Thunder Bluff / Undercity | Rune of Teleportation |
+| **Mage** | Portal: Stormwind / Ironforge / Darnassus / Orgrimmar / Thunder Bluff / Undercity | Rune of Portals |
+| **Mage** | Arcane Brilliance | Arcane Powder |
+| **Mage** | Slow Fall | Light Feather |
+| **Paladin** | Divine Intervention | Symbol of Divinity |
+| **Paladin** | Greater Blessing of Kings / Might / Wisdom / Salvation / Sanctuary / Light | Symbol of Kings |
+| **Priest** | Prayer of Fortitude / Shadow Protection / Spirit | Sacred Candle, Holy Candle |
+| **Priest** | Levitate | Light Feather |
+| **Shaman** | Reincarnation | Ankh |
+| **Rogue** | Blind | Blinding Powder |
+| **Rogue** | Vanish | Flash Powder |
+| **Warlock** | Inferno | Infernal Stone |
+| **Warlock** | Ritual of Doom | Demonic Figurine |
+| **Druid** | Rebirth | Maple / Stranglethorn / Ashwood / Hornbeam / Ironwood Seed |
+| **Druid** | Gift of the Wild | Wild Thornroot, Wild Quillvine |
+
+> Spells that consume class-generated resources (e.g. Soul Shards) are intentionally excluded — those already grey out the button when unavailable.
+
+## Installation
+
+1. Download or clone this repository
+2. Copy the `ReagentDisplay` folder into your `Interface/AddOns/` directory:
+   ```
+   WoW/Interface/AddOns/ReagentDisplay/
+   ├── ReagentDisplay.toc
+   ├── ReagentDisplay.lua
+   └── README.md
+   ```
+3. Restart the game or type `/reload`
+
+## Slash Commands
+
+| Command | Description |
+|---------|-------------|
+| `/rd` | Show help and available commands |
+| `/rd list` | Print all reagent counts currently in your bags |
+| `/rd debug` | Inspect all visible action bar buttons (spell names, textures, matched reagents) |
+
+## How It Works
+
+ReagentDisplay scans your visible action bar buttons using two detection methods:
+
+1. **Tooltip scanning** — reads the spell name from a hidden tooltip and matches it against a known spell-to-reagent table
+2. **Texture fallback** — matches the action button's icon texture against known spell icons (covers edge cases where tooltip scanning may not work)
+
+Custom Turtle WoW teleport/portal destinations are automatically detected via prefix matching — any spell starting with `Teleport:` or `Portal:` will show the appropriate rune count.
+
+## License
+
+This project is open source. Feel free to use, modify, and distribute.
