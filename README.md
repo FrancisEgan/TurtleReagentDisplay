@@ -1,4 +1,4 @@
-# ReagentDisplay
+# Turtle Reagent Display
 
 A lightweight Turtle WoW (1.12) addon that displays reagent counts directly on your action bar buttons. Never get caught without reagents again — see at a glance how many you have left before your next raid, dungeon, or portal request.
 
