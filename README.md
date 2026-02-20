@@ -36,15 +36,7 @@ A lightweight Turtle WoW (1.12) addon that displays reagent counts directly on y
 
 ## Installation
 
-1. Download or clone this repository
-2. Copy the `ReagentDisplay` folder into your `Interface/AddOns/` directory:
-   ```
-   WoW/Interface/AddOns/ReagentDisplay/
-   ├── ReagentDisplay.toc
-   ├── ReagentDisplay.lua
-   └── README.md
-   ```
-3. Restart the game or type `/reload`
+In the Turtle WoW launcher addons tab, click "Add new addon" and paste in the link to this repository.
 
 ## Slash Commands
 
