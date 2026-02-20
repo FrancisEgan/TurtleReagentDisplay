@@ -1,5 +1,5 @@
 ## Interface: 11200
-## Title: |cffabd473Turtle Reagent Display|
+## Title: |cffabd473Turtle Reagent Display
 ## Notes: Shows reagent counts on action bar spell buttons
 ## Author: Uncle Francis
 ## Version: 1.0.0
