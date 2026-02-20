@@ -1,6 +1,6 @@
 ## Interface: 11200
-## Title: ReagentDisplay
-## Notes: Shows reagent counts on action bar spell buttons for all classes (Mage, Paladin, Priest, Shaman, Rogue, Warlock, Druid).
-## Author: Player
+## Title: |cffabd473Turtle Reagent Display|
+## Notes: Shows reagent counts on action bar spell buttons
+## Author: Uncle Francis
 ## Version: 1.0.0
 ReagentDisplay.lua

@@ -11,28 +11,7 @@ A lightweight Turtle WoW (1.12) addon that displays reagent counts directly on y
 - **Auto-updates** on bag changes, action bar swaps, and page changes
 - **Turtle WoW compatible** — auto-detects custom `Teleport:` and `Portal:` destinations via prefix matching
 - **Minimal performance impact** — throttled scanning with event-driven updates
-
-## Supported Spells & Reagents
-
-| Class | Spells | Reagent |
-|-------|--------|---------|
-| **Mage** | Teleport: Stormwind / Ironforge / Darnassus / Orgrimmar / Thunder Bluff / Undercity | Rune of Teleportation |
-| **Mage** | Portal: Stormwind / Ironforge / Darnassus / Orgrimmar / Thunder Bluff / Undercity | Rune of Portals |
-| **Mage** | Arcane Brilliance | Arcane Powder |
-| **Mage** | Slow Fall | Light Feather |
-| **Paladin** | Divine Intervention | Symbol of Divinity |
-| **Paladin** | Greater Blessing of Kings / Might / Wisdom / Salvation / Sanctuary / Light | Symbol of Kings |
-| **Priest** | Prayer of Fortitude / Shadow Protection / Spirit | Sacred Candle, Holy Candle |
-| **Priest** | Levitate | Light Feather |
-| **Shaman** | Reincarnation | Ankh |
-| **Rogue** | Blind | Blinding Powder |
-| **Rogue** | Vanish | Flash Powder |
-| **Warlock** | Inferno | Infernal Stone |
-| **Warlock** | Ritual of Doom | Demonic Figurine |
-| **Druid** | Rebirth | Maple / Stranglethorn / Ashwood / Hornbeam / Ironwood Seed |
-| **Druid** | Gift of the Wild | Wild Thornroot, Wild Quillvine |
-
-> Spells that consume class-generated resources (e.g. Soul Shards) are intentionally excluded — those already grey out the button when unavailable.
+- Spells that consume class-generated resources (e.g. Soul Shards) are intentionally excluded — those already grey out the button when unavailable.
 
 ## Installation
 
@@ -40,11 +19,9 @@ In the Turtle WoW launcher addons tab, click "Add new addon" and paste in the li
 
 ## Slash Commands
 
-| Command | Description |
-|---------|-------------|
-| `/rd` | Show help and available commands |
-| `/rd list` | Print all reagent counts currently in your bags |
-| `/rd debug` | Inspect all visible action bar buttons (spell names, textures, matched reagents) |
+- `/rd` — Show help and available commands
+- `/rd list` — Print all reagent counts currently in your bags
+- `/rd debug` — Inspect all visible action bar buttons (spell names, textures, matched reagents)
 
 ## How It Works
 
