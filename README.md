@@ -2,6 +2,8 @@
 
 A lightweight Turtle WoW (1.12) addon that displays reagent counts directly on your action bar buttons. Never get caught without reagents again — see at a glance how many you have left before your next raid, dungeon, or portal request.
 
+<img width="375" height="127" alt="image" src="https://github.com/user-attachments/assets/65b20a6d-65aa-4e33-b363-d9040cd735d9" />
+
 ## Features
 
 - **Reagent count overlay** on every action bar button that uses a consumable reagent
@@ -12,20 +14,3 @@ A lightweight Turtle WoW (1.12) addon that displays reagent counts directly on y
 - **Turtle WoW compatible** — auto-detects custom `Teleport:` and `Portal:` destinations via prefix matching
 - **Minimal performance impact** — throttled scanning with event-driven updates
 - Spells that consume class-generated resources (e.g. Soul Shards) are intentionally excluded — those already grey out the button when unavailable.
-
-## Installation
-
-In the Turtle WoW launcher addons tab, click "Add new addon" and paste in the link to this repository.
-
-## How It Works
-
-ReagentDisplay scans your visible action bar buttons using two detection methods:
-
-1. **Tooltip scanning** — reads the spell name from a hidden tooltip and matches it against a known spell-to-reagent table
-2. **Texture fallback** — matches the action button's icon texture against known spell icons (covers edge cases where tooltip scanning may not work)
-
-Custom Turtle WoW teleport/portal destinations are automatically detected via prefix matching — any spell starting with `Teleport:` or `Portal:` will show the appropriate rune count.
-
-## License
-
-This project is open source. Feel free to use, modify, and distribute.
