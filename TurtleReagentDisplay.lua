@@ -18,6 +18,11 @@ local REAGENT_GROUPS = {
     arcane_powder = { "Arcane Powder" },
     -- Shared (Mage Slow Fall + Priest Levitate)
     light_feather = { "Light Feather" },
+    -- Mage (Khadgar's Unlocking R1-R4)
+    khadgar_unlocking_r1 = { "Tiny Bronze Key" },
+    khadgar_unlocking_r2 = { "Tiny Iron Key" },
+    khadgar_unlocking_r3 = { "Tiny Copper Key" },
+    khadgar_unlocking_r4 = { "Tiny Silver Key" },
     -- Paladin
     symbol_divinity = { "Symbol of Divinity" },
     symbol_kings    = { "Symbol of Kings" },
@@ -91,6 +96,16 @@ local SPELL_REAGENTS = {
     ["Gift of the Wild"] = "gift_wild",
 }
 
+-- Spells that require per-rank reagent mapping.
+local SPELL_RANK_REAGENTS = {
+    ["Khadgar's Unlocking"] = {
+        [1] = "khadgar_unlocking_r1",
+        [2] = "khadgar_unlocking_r2",
+        [3] = "khadgar_unlocking_r3",
+        [4] = "khadgar_unlocking_r4",
+    },
+}
+
 ---------------------------------------------------------------------------
 -- PREFIX matching for Turtle-WoW custom destinations
 -- Any "Teleport: <anything>" or "Portal: <anything>" not already
@@ -136,22 +151,51 @@ local groupCounts = {}
 
 local frame = CreateFrame("Frame", "ReagentDisplayFrame", UIParent)
 
--- Count a specific item across all bags
-local function CountItem(itemName)
+-- Count a specific item across all bags (and keyring, if available)
+local KEYRING_BAG_ID = KEYRING_CONTAINER or -2
+
+local function GetContainerSlotCount(bag)
+    -- Bagshui uses GetKeyRingSize for KEYRING_CONTAINER because keyring is special.
+    if bag == KEYRING_BAG_ID and type(GetKeyRingSize) == "function" then
+        local okKey, keySlots = pcall(GetKeyRingSize)
+        if okKey and keySlots and keySlots > 0 then
+            return keySlots
+        end
+    end
+
+    local okBag, bagSlots = pcall(GetContainerNumSlots, bag)
+    if okBag and bagSlots and bagSlots > 0 then
+        return bagSlots
+    end
+    return 0
+end
+
+local function CountItemInContainer(bag, itemName)
     local count = 0
-    for bag = 0, 4 do
-        local numSlots = GetContainerNumSlots(bag)
-        for slot = 1, numSlots do
-            local link = GetContainerItemLink(bag, slot)
-            if link then
-                local _, _, name = string.find(link, "%[(.+)%]")
-                if name and name == itemName then
-                    local _, itemCount = GetContainerItemInfo(bag, slot)
-                    count = count + (itemCount or 0)
-                end
+    local numSlots = GetContainerSlotCount(bag)
+    if numSlots <= 0 then
+        return 0
+    end
+
+    for slot = 1, numSlots do
+        local link = GetContainerItemLink(bag, slot)
+        if link then
+            local _, _, name = string.find(link, "%[(.+)%]")
+            if name and name == itemName then
+                local _, itemCount = GetContainerItemInfo(bag, slot)
+                count = count + (itemCount or 0)
             end
         end
     end
+    return count
+end
+
+local function CountItem(itemName)
+    local count = 0
+    for bag = 0, 4 do
+        count = count + CountItemInContainer(bag, itemName)
+    end
+    count = count + CountItemInContainer(KEYRING_BAG_ID, itemName)
     return count
 end
 
@@ -172,26 +216,83 @@ end
 ---------------------------------------------------------------------------
 local scanTip = CreateFrame("GameTooltip", "RDScanTip", UIParent, "GameTooltipTemplate")
 
-local function GetSpellNameForSlot(slot)
+local function ParseRankNumber(rankText)
+    if not rankText then return nil end
+    local _, _, digits = string.find(rankText, "(%d+)")
+    local n = tonumber(digits)
+    return n
+end
+
+local function GetSpellNameAndRankForSlot(slot)
     if not HasAction(slot) then return nil end
     if GetActionText(slot) then return nil end          -- skip macros
 
     scanTip:SetOwner(UIParent, "ANCHOR_NONE")
     scanTip:SetAction(slot)
-    local line = getglobal("RDScanTipTextLeft1")
-    local name = line and line:GetText()
+    local line1 = getglobal("RDScanTipTextLeft1")
+    local right1 = getglobal("RDScanTipTextRight1")
+    local name = line1 and line1:GetText()
+    -- Rank is usually on the right side ("Rank X"), not line 2.
+    local rank = ParseRankNumber(right1 and right1:GetText())
+    for i = 2, 8 do
+        if rank then break end
+        local left = getglobal("RDScanTipTextLeft" .. i)
+        local right = getglobal("RDScanTipTextRight" .. i)
+        local leftText = left and left:GetText()
+        local rightText = right and right:GetText()
+        rank = ParseRankNumber(leftText) or ParseRankNumber(rightText)
+        if rank then break end
+    end
     scanTip:Hide()
-    return name
+    return name, rank
+end
+
+local function GetRankMappedGroupFromTooltip(slot, rankMap)
+    scanTip:SetOwner(UIParent, "ANCHOR_NONE")
+    scanTip:SetAction(slot)
+
+    for i = 2, 12 do
+        local line = getglobal("RDScanTipTextLeft" .. i)
+        local text = line and line:GetText()
+        if text then
+            for _, group in pairs(rankMap) do
+                local items = REAGENT_GROUPS[group]
+                if items then
+                    for _, itemName in ipairs(items) do
+                        if string.find(text, itemName, 1, true) then
+                            scanTip:Hide()
+                            return group
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    scanTip:Hide()
+    return nil
 end
 
 ---------------------------------------------------------------------------
 -- Resolve an action slot to a reagent-group key (or nil)
--- 1) tooltip spell-name → exact match → prefix match
+-- 1) tooltip spell-name + rank → per-rank match → exact match → prefix match
 -- 2) fallback: icon texture match
 ---------------------------------------------------------------------------
 local function GetGroupForSlot(slot)
-    local spellName = GetSpellNameForSlot(slot)
+    local spellName, spellRank = GetSpellNameAndRankForSlot(slot)
     if spellName then
+        -- per-rank mapping
+        local rankMap = SPELL_RANK_REAGENTS[spellName]
+        if rankMap then
+            if spellRank and rankMap[spellRank] then
+                return rankMap[spellRank], spellName
+            end
+            -- Fallback: detect the reagent name directly from tooltip text.
+            local tooltipGroup = GetRankMappedGroupFromTooltip(slot, rankMap)
+            if tooltipGroup then
+                return tooltipGroup, spellName
+            end
+        end
         -- exact match
         local g = SPELL_REAGENTS[spellName]
         if g then return g, spellName end
